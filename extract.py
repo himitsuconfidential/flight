@@ -24,7 +24,7 @@ def run(page, querystring, first_run=False):
     txt = "document.querySelectorAll('[data-code=\"DIRECT\"]')[0].querySelector('span').click()"
     if (first_run):
         page.evaluate(txt)
-    page.wait_for_timeout(30000)
+    page.wait_for_timeout(10000)
     scroll_down(page)
     # Get the HTML content of the fully rendered page
     html = page.content()

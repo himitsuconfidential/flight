@@ -71,7 +71,7 @@ with sync_playwright() as p:
     # Set cookies on the page context
     page.context.add_cookies(cookies)
     first_run = True
-    for dte in range(3):
+    for dte in range(92):
         extract.run(page, querystring, first_run)
         first_run = False
         tocsv.run()
