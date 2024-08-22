@@ -23,8 +23,9 @@ def run(page, querystring, first_run=False):
     page.wait_for_load_state('networkidle')
     txt = "document.querySelectorAll('[data-code=\"DIRECT\"]')[0].querySelector('span').click()"
     if (first_run):
+        page.wait_for_timeout(9000)
         page.evaluate(txt)
-    page.wait_for_timeout(10000)
+    page.wait_for_timeout(1000)
     scroll_down(page)
     # Get the HTML content of the fully rendered page
     html = page.content()
