@@ -4,7 +4,7 @@ import csv
 from datetime import datetime, timedelta
 from playwright.sync_api import sync_playwright
 
-querystring = {"dcity":"HKG","acity":"TYO","ddate":"2024-09-01"}
+
 # Correctly structured cookies
 # Domain and path information
 cookie_domain = ".trip.com"  # Replace with the correct domain
@@ -71,13 +71,15 @@ with sync_playwright() as p:
     # Set cookies on the page context
     page.context.add_cookies(cookies)
     first_run = True
-    for dte in range(92):
-        extract.run(page, querystring, first_run)
-        first_run = False
-        tocsv.run()
-        update_change_log()
-        next_day = datetime.strptime(querystring['ddate'],"%Y-%m-%d") + timedelta(days=1)
-        querystring['ddate'] = next_day.strftime("%Y-%m-%d")
+    for querystring in [{"dcity":"HKG","acity":"TYO","ddate":"2024-09-01"},
+                        {"dcity":"TYO","acity":"HKG","ddate":"2024-09-01"}]:
+        for dte in range(92):
+            extract.run(page, querystring, first_run)
+            first_run = False
+            tocsv.run()
+            update_change_log()
+            next_day = datetime.strptime(querystring['ddate'],"%Y-%m-%d") + timedelta(days=1)
+            querystring['ddate'] = next_day.strftime("%Y-%m-%d")
 
     # Close the browser
     browser.close()
