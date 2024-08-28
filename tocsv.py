@@ -21,35 +21,41 @@ def run():
 
     elements_with_index = result_list_element.find_all(attrs={"data-index": True})
     data = []
-
+    airline_code_table = {'大灣區航空':'GB',
+                          '香港航空':'HX',
+                          '香港快運航空':'UO',
+                          '國泰航空':'CX',}
     for element in elements_with_index:
-       #try:
+
             
-            airline = element.find('div', class_ = 'flights-name')
-            price = element.find('span', class_=starts('o-price-flight'))
-            depart, arrive = element.find_all('span', class_=starts('time'))
-            depart_date = depart['data-testid'].split()[0][-10:]
-            
-            duration = element.find('div', class_=starts('flight-info-duration_'))
-            dairport,aairport = element.find_all('span', class_=starts('flight-info-stop__code_'))
-            baggage_element = element.find_all('i', class_='baggage-icon')
-            bags = [item['data-label-track'] for item in baggage_element]
-            FREE_CHECKED_BAGGAGE = 'FREE_CHECKED_BAGGAGE' if 'FREE_CHECKED_BAGGAGE' in bags else ''
-            FREE_CARRY_ON_BAGGAGE = 'FREE_CARRY_ON_BAGGAGE' if 'FREE_CARRY_ON_BAGGAGE' in bags else ''
-            data.append([datetime.now().strftime('%Y%m%d.%H'),
-                         depart_date,
-                         airline.text, 
-                         price['data-price'], 
-                         depart.text, 
-                         arrive.text,
-                         duration.text,
-                         dairport.text[:3],
-                         aairport.text[:3],
-                         FREE_CHECKED_BAGGAGE,
-                         FREE_CARRY_ON_BAGGAGE])
+        airline = element.find('div', class_ = 'flights-name')
+        airline_code = airline_code_table.get(airline.text)
+        price = element.find('span', class_=starts('o-price-flight'))
+        depart, arrive = element.find_all('span', class_=starts('time'))
+        depart_date = depart['data-testid'].split()[0][-10:]
+        
+        duration = element.find('div', class_=starts('flight-info-duration_'))
+        dairport,aairport = element.find_all('span', class_=starts('flight-info-stop__code_'))
+        baggage_element = element.find_all('i', class_='baggage-icon')
+        bags = [item['data-label-track'] for item in baggage_element]
+        FREE_CHECKED_BAGGAGE = 'Yes' if 'FREE_CHECKED_BAGGAGE' in bags else 'No'
+        FREE_CARRY_ON_BAGGAGE = 'Yes' if 'FREE_CARRY_ON_BAGGAGE' in bags else 'No'
+
+        if airline_code is not None:
+            data.append([datetime.now().strftime('%Y-%m-%d'),
+                            depart_date,
+                            airline.text, 
+                            airline_code,
+                            price['data-price'], 
+                            depart.text, 
+                            arrive.text,
+                            duration.text,
+                            dairport.text[:3],
+                            aairport.text[:3],
+                            FREE_CHECKED_BAGGAGE,
+                            FREE_CARRY_ON_BAGGAGE])
             print(data[-1])
-        #except:
-            #print('incomplete loading')
+
     with open(f'flight_data.csv', 'a', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerows(data)

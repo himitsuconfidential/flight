@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flight Data Table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Flight Data Table</h1>
+    <input type="text" id="extraction-number-filter" placeholder="Filter by Extraction Date">
+    <input type="text" id="depart-date-filter" placeholder="Filter by Departure Date">
+    <input type="text" id="airline-code-filter" placeholder="Filter by Airline Code">
+    <input type="number" id="price-filter" placeholder="Filter by Price">
+
+    <button id="apply-filters">Apply Filters</button>
+    <table id="flight-data-table">
+        <thead>
+            
+        </thead>
+        <tbody id="flight-data-tbody">
+        </tbody>
+    </table>
+
+    <script>
+        // Read the CSV file
+        fetch('flight_data.csv')
+            .then(response => response.text())
+            .then(csvData => {
+                const rows = csvData.split('\n');
+                const tableBody = document.getElementById('flight-data-tbody');
+                const tableHeader = document.getElementById('flight-data-table').querySelector('thead');
+                
+                // Create the table header
+                const headerRow = document.createElement('tr');
+                const headerColumns = rows[0].split(',');
+                headerColumns.forEach(column => {
+                    const headerCell = document.createElement('th');
+                    headerCell.textContent = column;
+                    headerRow.appendChild(headerCell);
+                });
+                tableHeader.appendChild(headerRow);
+
+                // Create the table rows
+                rows.forEach((row, index) => {
+                    if (index > 0) {
+                        const columns = row.split(',');
+                        const tableRow = document.createElement('tr');
+
+                        columns.forEach((column, columnIndex) => {
+                            const tableCell = document.createElement('td');
+                            tableCell.textContent = column;
+                            tableRow.appendChild(tableCell);
+                        });
+
+                        tableBody.appendChild(tableRow);
+                    }
+                });
+
+                // Add event listener to apply filters button
+                document.getElementById('apply-filters').addEventListener('click', () => {
+                    const ExtractionDateFilter = document.getElementById('extraction-number-filter').value;
+                    const DepartDateFilter = document.getElementById('depart-date-filter').value;
+                    const AirlineCodeFilter = document.getElementById('airline-code-filter').value;
+                    const priceFilter = document.getElementById('price-filter').value;
+                    
+
+                    // Filter the table rows
+                    const tableRows = tableBody.children;
+                    for (const tableRow of tableRows) {
+                        if (tableRow.children.length > 0) {
+                            const ExtractionDateCell = tableRow.children[0];
+                            const DepartDateCell = tableRow.children[1];
+                            const AirlineCodeCell = tableRow.children[3];
+                            const priceCell = tableRow.children[4];
+                            
+
+                            if ((ExtractionDateFilter === '' || ExtractionDateCell.textContent.includes(ExtractionDateFilter)) &&
+                                (DepartDateFilter === '' || DepartDateCell.textContent.includes(DepartDateFilter)) &&
+                                (AirlineCodeFilter === '' || AirlineCodeCell.textContent.includes(AirlineCodeFilter)) &&
+                                (priceFilter === '' || parseFloat(priceCell.textContent) >= parseFloat(priceFilter))) {
+                                tableRow.style.display = 'table-row';
+                            } else {
+                                tableRow.style.display = 'none';
+                            }
+                        }
+                    }
+                });
+            });
+    </script>
+</body>
+</html>
