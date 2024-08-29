@@ -24,7 +24,7 @@
     <input type="text" id="extraction-number-filter" placeholder="Filter by Extraction Date">
     <input type="text" id="depart-date-filter" placeholder="Filter by Departure Date">
     <input type="text" id="airline-code-filter" placeholder="Filter by Airline Code">
-    <input type="number" id="price-filter" placeholder="Filter by Price">
+    <input type="text" id="depart-time-filter" placeholder="Filter by Departure Time">
 
     <button id="apply-filters">Apply Filters</button>
     <table id="flight-data-table">
@@ -75,7 +75,7 @@
                     const ExtractionDateFilter = document.getElementById('extraction-number-filter').value;
                     const DepartDateFilter = document.getElementById('depart-date-filter').value;
                     const AirlineCodeFilter = document.getElementById('airline-code-filter').value;
-                    const priceFilter = document.getElementById('price-filter').value;
+                    const DepartTimeFilter = document.getElementById('depart-time-filter').value;
                     
 
                     // Filter the table rows
@@ -85,13 +85,13 @@
                             const ExtractionDateCell = tableRow.children[0];
                             const DepartDateCell = tableRow.children[1];
                             const AirlineCodeCell = tableRow.children[3];
-                            const priceCell = tableRow.children[4];
+                            const DepartTimeCell = tableRow.children[5];
                             
 
-                            if ((ExtractionDateFilter === '' || ExtractionDateCell.textContent.includes(ExtractionDateFilter)) &&
-                                (DepartDateFilter === '' || DepartDateCell.textContent.includes(DepartDateFilter)) &&
-                                (AirlineCodeFilter === '' || AirlineCodeCell.textContent.includes(AirlineCodeFilter)) &&
-                                (priceFilter === '' || parseFloat(priceCell.textContent) >= parseFloat(priceFilter))) {
+                            if ((ExtractionDateFilter === '' || new RegExp(ExtractionDateFilter).test(ExtractionDateCell.textContent)) &&
+                                (DepartDateFilter === '' || new RegExp(DepartDateFilter).test(DepartDateCell.textContent)) &&
+                                (AirlineCodeFilter === '' || new RegExp(AirlineCodeFilter).test(AirlineCodeCell.textContent)) &&
+                                (DepartTimeFilter === '' || new RegExp(DepartTimeFilter).test(DepartTimeCell.textContent))) {
                                 tableRow.style.display = 'table-row';
                             } else {
                                 tableRow.style.display = 'none';
