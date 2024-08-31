@@ -53,6 +53,9 @@ fetch('flight_data.csv')
 
         // Add event listener to apply filters button
         document.getElementById('apply-filters').addEventListener('click', applyFilters);
+
+        // Add event listener for the download button
+        document.getElementById('download-csv').addEventListener('click', downloadCSV);
     });
 
 function renderPage(page) {
@@ -83,7 +86,7 @@ function applyFilters() {
     const DepartTimeFilter = document.getElementById('depart-time-filter').value;
 
     const filteredRows = allRows.filter((row, index) => {
-        if (index === 0) return false; // no need header row
+        if (index === 0) return true; // include header row
         const columns = row.split(','); 
         return (ExtractionDateFilter === '' || new RegExp(ExtractionDateFilter).test(columns[0])) &&
                (DepartDateFilter === '' || new RegExp(DepartDateFilter).test(columns[1])) &&
@@ -96,6 +99,28 @@ function applyFilters() {
     document.getElementById('total-pages').textContent = totalPages;
     currentPage = 1;
     renderPage(currentPage);
+}
+
+function downloadCSV() {
+    if (selectedRows.length === 0) {
+        alert('No data to download');
+        return;
+    }
+
+    //selectedRows already has the header row in 0th position
+    const csvContent = selectedRows.join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'filtered_flight_data.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 }
 
 function showDetails(row) {
