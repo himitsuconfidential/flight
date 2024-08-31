@@ -70,9 +70,11 @@ with sync_playwright() as p:
 
     # Set cookies on the page context
     page.context.add_cookies(cookies)
-    
-    for querystring in [{"dcity":"HKG","acity":"TYO","ddate":"2024-09-01"},
-                        {"dcity":"TYO","acity":"HKG","ddate":"2024-09-01"}]:
+    today = datetime.now()
+    tmr = today + timedelta(days=1)
+    tmr_string = tmr.strftime("%Y-%m-%d")
+    for querystring in [{"dcity":"HKG","acity":"TYO","ddate":tmr_string},
+                        {"dcity":"TYO","acity":"HKG","ddate":tmr_string}]:
         first_run = True
         for dte in range(92):
             extract.run(page, querystring, first_run)
