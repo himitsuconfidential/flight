@@ -2,62 +2,18 @@
 <html>
 <head>
     <title>Flight Data Table</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f0f0f0;
-        }
-
-        tr:hover {
-            background-color: #ddd;
-        }
-        .modal {
-        display: none; 
-        position: fixed; 
-        z-index: 1; 
-        left: 0;
-        top: 0;
-        width: 100%; 
-        height: 100%; 
-        overflow: auto; 
-        background-color: rgb(0,0,0); 
-        background-color: rgba(0,0,0,0.4); 
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 50px auto; 
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; 
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-    }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="toolbar">
+        <div class="page-nav">
+            <button id="prev-page">←</button>
+            <input type="number" id="current-page" min="1" value="1" inputmode="numeric" pattern="\d*">
+            <span>of <span id="total-pages"></span> </span>
+            <button id="next-page">→</button>
+        </div>
+    </div>
+
     <h1>Flight Data Table</h1>
     <input type="text" id="extraction-number-filter" placeholder="Filter by Extraction Date">
     <input type="text" id="depart-date-filter" placeholder="Filter by Departure Date">
@@ -66,110 +22,25 @@
 
     <button id="apply-filters">Apply Filters</button>
     <table id="flight-data-table">
-        <thead>
-            
-        </thead>
-        <tbody id="flight-data-tbody">
-        </tbody>
+        <thead></thead>
+        <tbody id="flight-data-tbody"></tbody>
     </table>
-    <!-- Modal Structure -->
+
     <div id="modal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <div id="record-details"></div>
+
+            <table id="more-price-data-table"><thead> <tr> 
+                <th> Extraction Date </th>
+                <th> Price </th> 
+                <tbody id="more-price-data-tbody"></tbody>
+            </tr> </thead> </table>
         </div>
+        
     </div>
     
-    <script>
-        // Read the CSV file
-        fetch('flight_data.csv')
-            .then(response => response.text())
-            .then(csvData => {
-                const rows = csvData.split('\r\n');
-                const tableBody = document.getElementById('flight-data-tbody');
-                const tableHeader = document.getElementById('flight-data-table').querySelector('thead');
-                
-                // Create the table header
-                const headerRow = document.createElement('tr');
-                const headerColumns = rows[0].split(',');
-                headerColumns.forEach(column => {
-                    const headerCell = document.createElement('th');
-                    headerCell.textContent = column;
-                    headerRow.appendChild(headerCell);
-                });
-                tableHeader.appendChild(headerRow);
-
-                // Create the table rows
-                rows.forEach((row, index) => {
-                    if (index > 0) {
-                        const columns = row.split(',');
-                        const tableRow = document.createElement('tr');
-                        tableRow.onclick = (event) => showDetails(tableRow);
-                        columns.forEach((column, columnIndex) => {
-                            const tableCell = document.createElement('td');
-                            tableCell.textContent = column;
-                            tableRow.appendChild(tableCell);
-                        });
-
-                        tableBody.appendChild(tableRow);
-                    }
-                });
-
-                // Add event listener to apply filters button
-                document.getElementById('apply-filters').addEventListener('click', () => {
-                    const ExtractionDateFilter = document.getElementById('extraction-number-filter').value;
-                    const DepartDateFilter = document.getElementById('depart-date-filter').value;
-                    const AirlineCodeFilter = document.getElementById('airline-code-filter').value;
-                    const DepartTimeFilter = document.getElementById('depart-time-filter').value;
-                    
-
-                    // Filter the table rows
-                    const tableRows = tableBody.children;
-                    for (const tableRow of tableRows) {
-                        if (tableRow.children.length > 0) {
-                            const ExtractionDateCell = tableRow.children[0];
-                            const DepartDateCell = tableRow.children[1];
-                            const AirlineCodeCell = tableRow.children[3];
-                            const DepartTimeCell = tableRow.children[5];
-                            
-
-                            if ((ExtractionDateFilter === '' || new RegExp(ExtractionDateFilter).test(ExtractionDateCell.textContent)) &&
-                                (DepartDateFilter === '' || new RegExp(DepartDateFilter).test(DepartDateCell.textContent)) &&
-                                (AirlineCodeFilter === '' || new RegExp(AirlineCodeFilter).test(AirlineCodeCell.textContent)) &&
-                                (DepartTimeFilter === '' || new RegExp(DepartTimeFilter).test(DepartTimeCell.textContent))) {
-                                tableRow.style.display = 'table-row';
-                            } else {
-                                tableRow.style.display = 'none';
-                            }
-                        }
-                    }
-                });
-            });
-    function showDetails(row) {
-        console.log('showing details')
-        var cells = row.getElementsByTagName("td");
-        var baggageMapping = {"YesYes": "Both checked baggage and carry on baggage", "YesNo": "Only checked baggage", "NoYes": "Only carry on baggage", "NoNo": "No baggage"}
-        var baggageString = baggageMapping[cells[10].innerHTML + cells[11].innerHTML]
-        var details = 
-        `<p>Time: ${cells[1].innerHTML} ${cells[5].innerHTML} → ${cells[6].innerHTML} (Totally ${cells[7].innerHTML})</p>
-        <p>Location: ${cells[8].innerHTML} → ${cells[9].innerHTML}</p>
-        <p>Baggage policy: ${baggageString}</p>`;
-
-        document.getElementById("record-details").innerHTML = details;
-        document.getElementById("modal").style.display = "block";
-    }
-
-    function closeModal() {
-        document.getElementById("modal").style.display = "none";
-    }
-
-    // Close the modal when clicking outside of it
-    window.onclick = function(event) {
-        var modal = document.getElementById("modal");
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
-    </script>
+    
+    <script src="index.js"></script>
 </body>
 </html>
