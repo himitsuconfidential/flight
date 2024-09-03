@@ -3,6 +3,7 @@ let allRows = [];
 let selectedRows = [];
 let currentPage = 1;
 let totalPages = 1;
+const isMobile = window.innerWidth <= 768;
 
 // Read the CSV file
 fetch('flight_data.csv')
@@ -14,14 +15,16 @@ fetch('flight_data.csv')
         const tableHeader = document.getElementById('flight-data-table').querySelector('thead');
         
         // Create the table header
-        const headerRow = document.createElement('tr');
-        const headerColumns = allRows[0].split(',');
-        headerColumns.forEach(column => {
-            const headerCell = document.createElement('th');
-            headerCell.textContent = column;
-            headerRow.appendChild(headerCell);
-        });
-        tableHeader.appendChild(headerRow);
+        if (!isMobile) {
+            const headerRow = document.createElement('tr');
+            const headerColumns = allRows[0].split(',');
+            headerColumns.forEach(column => {
+                const headerCell = document.createElement('th');
+                headerCell.textContent = column;
+                headerRow.appendChild(headerCell);
+            });
+            tableHeader.appendChild(headerRow);
+        }
 
         totalPages = Math.ceil((allRows.length - 1) / ROWS_PER_PAGE);
         document.getElementById('total-pages').textContent = totalPages;
@@ -64,16 +67,35 @@ function renderPage(page) {
     const start = (page - 1) * ROWS_PER_PAGE + 1;
     const end = Math.min(start + ROWS_PER_PAGE, selectedRows.length);
 
-    for (let i = start; i < end; i++) {
-        const columns = selectedRows[i].split(',');
-        const tableRow = document.createElement('tr');
-        tableRow.onclick = (event) => showDetails(tableRow);
-        columns.forEach((column) => {
-            const tableCell = document.createElement('td');
-            tableCell.textContent = column;
-            tableRow.appendChild(tableCell);
-        });
-        tableBody.appendChild(tableRow);
+    if (isMobile) {
+        const tileContainer = document.createElement('div');
+        tileContainer.className = 'tile-container';
+        for (let i = start; i < end; i++) {
+            const columns = selectedRows[i].split(',');
+            const tile = document.createElement('div');
+            tile.className = 'tile';
+            tile.innerHTML = `
+                <h2>${columns[2]} (${columns[3]})</h2>
+                <p>Time: ${columns[1]} ${columns[5]} → ${columns[6]} (Totally ${columns[7]})</p>
+                <p>Location: ${columns[8]} → ${columns[9]}</p>
+                <p>Baggage: ${columns[10]} ${columns[11]}</p>
+                <button onclick="showDetails(${i})">Details</button>
+            `;
+            tileContainer.appendChild(tile);
+        }
+        tableBody.appendChild(tileContainer);
+    } else {
+        for (let i = start; i < end; i++) {
+            const columns = selectedRows[i].split(',');
+            const tableRow = document.createElement('tr');
+            tableRow.onclick = () => showDetails(i); // Pass the correct row index
+            columns.forEach((column) => {
+                const tableCell = document.createElement('td');
+                tableCell.textContent = column;
+                tableRow.appendChild(tableCell);
+            });
+            tableBody.appendChild(tableRow);
+        }
     }
 
     document.getElementById('current-page').value = page;
@@ -123,41 +145,47 @@ function downloadCSV() {
     }
 }
 
-function showDetails(row) {
-    console.log('showing details')
-    var cells = row.getElementsByTagName("td");
-    var locationMapping = {"HKG":"香港HKG", "NRT":"東京NRT", "HND":"東京HND"}
-    var baggageMapping = {"YesYes": "Both checked baggage and carry on baggage", "YesNo": "Only checked baggage", "NoYes": "Only carry on baggage", "NoNo": "No baggage"}
-    var baggageString = baggageMapping[cells[10].innerHTML + cells[11].innerHTML]
-    var details = 
-    `<p>Time: ${cells[1].innerHTML} ${cells[5].innerHTML} → ${cells[6].innerHTML} (Totally ${cells[7].innerHTML})</p>
-    <p>Location: ${locationMapping[cells[8].innerHTML]} → ${locationMapping[cells[9].innerHTML]}</p>
-    <p>Airline: ${cells[2].innerHTML} (${cells[3].innerHTML})</p>
-    <p>Baggage policy: ${baggageString}</p>`;
+function showDetails(rowIndex) {
+    if (rowIndex < 0 || rowIndex >= selectedRows.length) {
+        console.error('Invalid row index:', rowIndex);
+        return;
+    }
 
-    var morePriceData = ``
+    const selectedRow = selectedRows[rowIndex].split(',');
+    var locationMapping = {"HKG":"香港HKG", "NRT":"東京NRT", "HND":"東京HND"};
+    var baggageMapping = {
+        "YesYes": "Both checked baggage and carry on baggage",
+        "YesNo": "Only checked baggage",
+        "NoYes": "Only carry on baggage",
+        "NoNo": "No baggage"
+    };
+    var baggageString = baggageMapping[selectedRow[10] + selectedRow[11]];
+    var details = `
+        <p>Time: ${selectedRow[1]} ${selectedRow[5]} → ${selectedRow[6]} (Totally ${selectedRow[7]})</p>
+        <p>Location: ${locationMapping[selectedRow[8]]} → ${locationMapping[selectedRow[9]]}</p>
+        <p>Airline: ${selectedRow[2]} (${selectedRow[3]})</p>
+        <p>Baggage policy: ${baggageString}</p>
+    `;
+
     const tableBody = document.getElementById('more-price-data-tbody');
     tableBody.innerHTML = '';
     const sameFlightRows = allRows.filter((row, index) => {
         const columns = row.split(',');
-        
-        for (let i of [1,2,3,5,6,7,8,9,10]){
-            if (columns[i] !== cells[i].innerHTML) 
+        for (let i of [1, 2, 3, 5, 6, 7, 8, 9, 10]) {
+            if (columns[i] !== selectedRow[i]) 
                 return false;
         }
-
         return true;
     });
-    console.log(sameFlightRows)
+
     for (let sameFlightRow of sameFlightRows) {
         const columns = sameFlightRow.split(',');
         const tableRow = document.createElement('tr');
-        tableRow.innerHTML = `<td> ${columns[0]} </td> <td> ${columns[4]} </td>`
-        
+        tableRow.innerHTML = `<td>${columns[0]}</td><td>${columns[4]}</td>`;
         tableBody.appendChild(tableRow);
     }
-    
-    document.getElementById("record-details").innerHTML = details + morePriceData;
+
+    document.getElementById("record-details").innerHTML = details ;
     document.getElementById("modal").style.display = "block";
 }
 
