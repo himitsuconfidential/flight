@@ -73,12 +73,21 @@ function renderPage(page) {
         for (let i = start; i < end; i++) {
             const columns = selectedRows[i].split(',');
             const tile = document.createElement('div');
+            
+        var baggageMapping = {
+            "YesYes": "Both checked baggage and carry on baggage",
+            "YesNo": "Only checked baggage",
+            "NoYes": "Only carry on baggage",
+            "NoNo": "No baggage"
+        };
+        var baggageString = baggageMapping[columns[10] + columns[11]];
             tile.className = 'tile';
             tile.innerHTML = `
                 <h2>${columns[2]} (${columns[3]})</h2>
                 <p>Time: ${columns[1]} ${columns[5]} → ${columns[6]} (Totally ${columns[7]})</p>
                 <p>Location: ${columns[8]} → ${columns[9]}</p>
-                <p>Baggage: ${columns[10]} ${columns[11]}</p>
+                <p>Baggage: ${baggageString}</p>
+                <p>Price at ${columns[0]}: ${columns[4]}</p>
                 <button onclick="showDetails(${i})">Details</button>
             `;
             tileContainer.appendChild(tile);
@@ -160,10 +169,9 @@ function showDetails(rowIndex) {
         "NoNo": "No baggage"
     };
     var baggageString = baggageMapping[selectedRow[10] + selectedRow[11]];
-    var details = `
+    var details = `<h2> ${selectedRow[2]} (${selectedRow[3]})</h2>
         <p>Time: ${selectedRow[1]} ${selectedRow[5]} → ${selectedRow[6]} (Totally ${selectedRow[7]})</p>
         <p>Location: ${locationMapping[selectedRow[8]]} → ${locationMapping[selectedRow[9]]}</p>
-        <p>Airline: ${selectedRow[2]} (${selectedRow[3]})</p>
         <p>Baggage policy: ${baggageString}</p>
     `;
 
