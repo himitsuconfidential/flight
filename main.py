@@ -3,7 +3,7 @@ import extract
 import csv
 from datetime import datetime, timedelta
 from playwright.sync_api import sync_playwright
-
+import housekeeping
 
 # Correctly structured cookies
 # Domain and path information
@@ -87,4 +87,4 @@ with sync_playwright() as p:
     # Close the browser
     browser.close()
 
-
+housekeeping.run()

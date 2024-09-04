@@ -6,7 +6,7 @@ let totalPages = 1;
 const isMobile = window.innerWidth <= 768;
 
 // Read the CSV file
-fetch('flight_data.csv')
+fetch('flight_data_filtered.csv')
     .then(response => response.text())
     .then(csvData => {
         allRows = csvData.split('\r\n');
