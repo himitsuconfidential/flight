@@ -197,15 +197,22 @@ tr:hover {
     }
 
     .filters input {
-        width: calc(16% - 20px);
+        padding: 5px 5px;
+        width: calc(16% - 10px);
     }
 
     .filter-actions {
         flex-direction: column;
     }
 
+    .filters input::placeholder {
+        font-size: 10px; /* Change the font size */
+        white-space: normal; /* Allow placeholder text to wrap */
+        overflow-wrap: break-word; /* Break long words if necessary */
+    }
+    
     #apply-filters, #download-csv {
-        width: calc(16% - 20px);
+        width: calc(16% - 10px);
     }
 
     .tile-container {
@@ -222,7 +229,6 @@ tr:hover {
         margin: 10px;
         padding: 10px;
         width: 100%; /* Adjust width to fit two tiles per row */
-        max-width: 300px;
         box-sizing: border-box;
         border: 1px solid #ddd; /* Add border to enclose the tile */
     }
