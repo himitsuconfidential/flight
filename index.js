@@ -25,7 +25,7 @@ fetch('flight_data.csv')
             });
             tableHeader.appendChild(headerRow);
         }
-
+        initializeChart()
         totalPages = Math.ceil((allRows.length - 1) / ROWS_PER_PAGE);
         document.getElementById('total-pages').textContent = totalPages;
 
@@ -185,14 +185,18 @@ function showDetails(rowIndex) {
         }
         return true;
     });
-
+    xValues.length=0;
+    yValues.length=0;
     for (let sameFlightRow of sameFlightRows) {
         const columns = sameFlightRow.split(',');
         const tableRow = document.createElement('tr');
         tableRow.innerHTML = `<td>${columns[0]}</td><td>${columns[4]}</td>`;
+        xValues.push(columns[0]);
+        yValues.push(columns[4]);
         tableBody.appendChild(tableRow);
     }
 
+    priceChart.update();
     document.getElementById("record-details").innerHTML = details ;
     document.getElementById("modal").style.display = "block";
 }
@@ -213,3 +217,23 @@ document.querySelector('#modal').addEventListener('touchend', function(e) {
         closeModal();
         e.preventDefault();
 });
+
+function initializeChart(){
+    xValues = [];
+    yValues = [];
+    priceChart = new Chart("myChart", {
+        type: "line",
+        data: {
+        labels: xValues,
+        datasets: [{ 
+            data: yValues,
+            borderColor: "red",
+            fill: false
+        }]
+        },
+        options: {
+            legend: {display: false}
+        }
+    });
+
+}

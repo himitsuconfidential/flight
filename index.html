@@ -35,17 +35,19 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <div id="record-details"></div>
-
-            <table id="more-price-data-table"><thead> <tr> 
-                <th> Extraction Date </th>
-                <th> Price </th> 
-                <tbody id="more-price-data-tbody"></tbody>
-            </tr> </thead> </table>
+            <div id="more-price-data">
+              <canvas id="myChart"></canvas>
+                <table id="more-price-data-table"><thead> <tr> 
+                    <th> Extraction Date </th>
+                    <th> Price </th> 
+                    <tbody id="more-price-data-tbody"></tbody>
+                </tr> </thead> </table>  
+            </div>
         </div>
         
     </div>
     
-    
-    <script src="index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script src="index.js"></script>  
 </body>
 </html>

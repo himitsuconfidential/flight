@@ -54,6 +54,8 @@ h1 {
     display: flex;
     justify-content: flex-start;
     margin-bottom: 20px;
+    overflow-x: auto; /* Make the filters scrollable horizontally */
+    white-space: nowrap; /* Prevent wrapping */
 }
 .filters input {
     width: 200px; /* Set a specific width for the input boxes */
@@ -94,7 +96,7 @@ table {
     overflow-x: auto;
 }
 th, td {
-    padding: 15px;
+    padding: 10px;
     text-align: left;
     border-bottom: 1px solid #ecf0f1;
     border-right: 1px solid #ecf0f1;
@@ -159,6 +161,20 @@ tr:hover {
     display: table;
     border-radius: 0px;
 }
+
+#more-price-data {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+#myChart {
+    flex: 1;
+    max-width: 600px;
+}
+
+
 @media (max-width: 768px) {
     .toolbar {
         flex-direction: column;
@@ -204,8 +220,8 @@ tr:hover {
         box-shadow: 0 2px 15px rgba(0,0,0,0.1);
         border-radius: 8px;
         margin: 10px;
-        padding: 15px;
-        width: calc(50% - 40px); /* Adjust width to fit two tiles per row */
+        padding: 10px;
+        width: 100%; /* Adjust width to fit two tiles per row */
         max-width: 300px;
         box-sizing: border-box;
         border: 1px solid #ddd; /* Add border to enclose the tile */
@@ -216,9 +232,13 @@ tr:hover {
         margin-bottom: 10px;
     }
 
-    .tile p {
+    .tile p, #record-details p {
         font-size: 14px;
-        margin: 5px 0;
+        color: #333;
+        line-height: 1.6;
+        margin: 0 0;
+        background-color: #f9f9f9; /* Set a background color */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1)
     }
 
     .tile button {
@@ -240,5 +260,9 @@ tr:hover {
     /* Hide table header in mobile view */
     #flight-data-table thead {
         display: none;
+    }
+
+    #more-price-data {
+        flex-direction: column;
     }
 }
