@@ -213,9 +213,11 @@ window.onclick = function(event) {
     }
 }
 
-document.querySelector('#modal').addEventListener('touchend', function(e) {
-        closeModal();
-        e.preventDefault();
+document.addEventListener('touchend', function(event) {
+    var modal = document.getElementById("modal");
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
 });
 
 function initializeChart(){
