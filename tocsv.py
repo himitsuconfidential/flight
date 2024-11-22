@@ -27,7 +27,7 @@ def run():
                           '國泰航空':'CX',}
     for element in elements_with_index:
 
-            
+        print(element.text)
         airline = element.find('div', class_ = 'flights-name')
         airline_code = airline_code_table.get(airline.text)
         price = element.find('span', class_=starts('o-price-flight'))
