@@ -28,25 +28,25 @@ def run():
     for element in elements_with_index:
 
         print(element.text)
-        airline = element.find('div', class_ = 'flights-name')
+        airline = element.find('span', class_ = 'airline-base')
         airline_code = airline_code_table.get(airline.text)
-        price = element.find('span', class_=starts('o-price-flight'))
+        price = element.find('span', class_=starts('avg-price-txt'))
         depart, arrive = element.find_all('span', class_=starts('time'))
         depart_date = depart['data-testid'].split()[0][-10:]
         
         duration = element.find('div', class_=starts('flight-info-duration_'))
-        dairport,aairport = element.find_all('span', class_=starts('flight-info-stop__code_'))
-        baggage_element = element.find_all('i', class_='baggage-icon')
+        dairport,aairport = element.find_all('div', class_=starts('flight-info-stop__code_'))
+        baggage_element = element.find_all('i', class_='fi-icon')
         bags = [item['data-label-track'] for item in baggage_element]
-        FREE_CHECKED_BAGGAGE = 'Yes' if 'FREE_CHECKED_BAGGAGE' in bags else 'No'
-        FREE_CARRY_ON_BAGGAGE = 'Yes' if 'FREE_CARRY_ON_BAGGAGE' in bags else 'No'
+        FREE_CHECKED_BAGGAGE = 'Yes' if len(baggage_element) >= 1 else 'No'
+        FREE_CARRY_ON_BAGGAGE = 'NA'
 
         if airline_code is not None:
             data.append([datetime.now().strftime('%Y-%m-%d'),
                             depart_date,
                             airline.text, 
                             airline_code,
-                            price['data-price'], 
+                            price.text.split('HK$')[-1] if 'HK$' in price.text else price.text, 
                             depart.text, 
                             arrive.text,
                             duration.text,
