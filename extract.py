@@ -20,6 +20,7 @@ def run(page, querystring, first_run=False):
     #e.g. https://hk.trip.com/flights/showfarefirst?dcity=hkg&acity=tyo&ddate=2024-09-01&triptype=ow&class=y&lowpricesource=searchform&quantity=1&searchboxarg=t&nonstoponly=off&locale=zh-TW&curr=HKD
     page.goto(f'https://hk.trip.com/flights/showfarefirst?dcity={dcity}&acity={acity}&ddate={ddate}&triptype=ow&class=y&lowpricesource=searchform&quantity=1&searchboxarg=t&nonstoponly=off&locale=zh-TW&curr=HKD', timeout=60000)
     # Wait for the page to load completely with a timeout of 60 seconds
+    page.wait_for_timeout(10000)#wait 10 seconds for debug
     with open('extractsnapshot.html', 'w') as file: #for debug
         print(page.content())
         file.write(page.content())
