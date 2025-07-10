@@ -35,7 +35,7 @@ def run():
         depart_date = depart['data-testid'].split()[0][-10:]
         
         duration = element.find('div', class_=starts('flight-info-duration_'))
-        dairport,aairport = element.find_all('div', class_=starts('flight-info-stop__code_'))
+        dairport,aairport = element.find_all('div', class_=starts('flt-card-stop__code'))
         baggage_element = element.find_all('i', class_='fi-icon')
         bags = [item['data-label-track'] for item in baggage_element]
         FREE_CHECKED_BAGGAGE = 'Yes' if len(baggage_element) >= 1 else 'No'
