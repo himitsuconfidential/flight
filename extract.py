@@ -35,7 +35,7 @@ def run(page, querystring, first_run=False):
     """
     if (first_run):
         page.wait_for_timeout(9000)
-    page.evaluate(txt)
+        page.evaluate(txt)
     page.wait_for_timeout(1000)
     scroll_down(page)
     # Get the HTML content of the fully rendered page
