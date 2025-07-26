@@ -73,9 +73,9 @@ with sync_playwright() as p:
     today = datetime.now()
     tmr = today + timedelta(days=1)
     tmr_string = tmr.strftime("%Y-%m-%d")
+    first_run = True
     for querystring in [{"dcity":"HKG","acity":"TYO","ddate":tmr_string},
                         {"dcity":"TYO","acity":"HKG","ddate":tmr_string}]:
-        first_run = True
         for dte in range(92):
             extract.run(page, querystring, first_run)
             first_run = False
